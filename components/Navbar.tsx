@@ -41,7 +41,10 @@ export default function Navbar({ session }: NavbarProps) {
                 Profil
               </Link>
               <button
-                onClick={() => signOut({ callbackUrl: "/login" })}
+                onClick={async () => {
+                  await signOut({ redirect: false });
+                  window.location.href = "/login";
+                }}
                 className="ml-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-white/10 hover:bg-white/20 transition"
               >
                 Keluar
