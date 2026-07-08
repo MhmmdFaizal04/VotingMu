@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { PollOption } from "@/lib/queries/polls";
 
 interface VoteFormProps {
   pollId: string;
-  options: { id: string; text: string; vote_count: number }[];
-  onVoted: (optionId: string) => void;
+  options: PollOption[];
+  onVoted: (optionId: string, updatedOptions: PollOption[], total: number) => void;
   defaultSelected?: string | null;
 }
 
@@ -28,13 +29,14 @@ export default function VoteForm({ pollId, options, onVoted, defaultSelected }: 
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Gagal mengirim suara");
-        setSelected("");
+        setSelected(defaultSelected ?? "");
         return;
       }
-      onVoted(optionId);
+      // Pass updated counts from API response directly to parent
+      onVoted(optionId, data.options, data.total);
     } catch {
       setError("Tidak dapat terhubung ke server");
-      setSelected("");
+      setSelected(defaultSelected ?? "");
     } finally {
       setLoading(false);
     }

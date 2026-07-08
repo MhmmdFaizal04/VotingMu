@@ -28,9 +28,14 @@ export default function PollDetailClient({
   const isExpired = initialPoll.expires_at ? new Date(initialPoll.expires_at) < new Date() : false;
   const isClosed = !initialPoll.is_active || isExpired;
 
-  const handleVoted = useCallback((optionId: string) => {
-    setUserVoteId(optionId);
-  }, []);
+  const handleVoted = useCallback(
+    (optionId: string, updatedOptions: PollOption[], updatedTotal: number) => {
+      setUserVoteId(optionId);
+      setOptions(updatedOptions);
+      setTotal(updatedTotal);
+    },
+    []
+  );
 
   // Pusher subscription for real-time updates
   useEffect(() => {
