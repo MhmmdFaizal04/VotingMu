@@ -104,28 +104,40 @@ export default function PollDetailClient({
         </span>
       </div>
 
-      {/* Vote form or already voted */}
-      {!isClosed && !hasVoted && (
+      {/* Vote form */}
+      {!isClosed ? (
         <div className="bg-white rounded-2xl border border-[#e9edef] p-6 mb-4">
-          <h2 className="text-base font-semibold text-[#111b21] mb-4">
-            Berikan suaramu
-          </h2>
-          <VoteForm pollId={initialPoll.id} options={options} onVoted={handleVoted} />
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-semibold text-[#111b21]">
+              {hasVoted ? "Ganti pilihanmu" : "Berikan suaramu"}
+            </h2>
+            {hasVoted && (
+              <span className="text-xs text-[#667781]">
+                Pilihan sekarang:{" "}
+                <span className="font-semibold text-[#128c7e]">
+                  {options.find((o) => o.id === userVoteId)?.text ?? ""}
+                </span>
+              </span>
+            )}
+          </div>
+          <VoteForm
+            pollId={initialPoll.id}
+            options={options}
+            onVoted={handleVoted}
+            defaultSelected={userVoteId}
+          />
         </div>
-      )}
-
-      {hasVoted && (
-        <div className="bg-[#dcf8c6] border border-[#25d366]/30 rounded-2xl px-5 py-3 mb-4 text-sm text-[#128c7e] font-medium">
-          Suara kamu sudah tercatat. Pilihan kamu:{" "}
-          <span className="font-bold">
-            {options.find((o) => o.id === userVoteId)?.text ?? ""}
-          </span>
-        </div>
-      )}
-
-      {isClosed && !hasVoted && (
+      ) : (
         <div className="bg-gray-50 border border-[#e9edef] rounded-2xl px-5 py-3 mb-4 text-sm text-[#667781] font-medium">
           Polling ini sudah ditutup.
+          {hasVoted && (
+            <span className="ml-1">
+              Pilihan kamu:{" "}
+              <span className="font-bold text-[#128c7e]">
+                {options.find((o) => o.id === userVoteId)?.text ?? ""}
+              </span>
+            </span>
+          )}
         </div>
       )}
 

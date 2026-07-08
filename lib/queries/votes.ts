@@ -12,21 +12,22 @@ export interface VoteRecord {
 }
 
 /**
- * Cast a vote. Returns true if inserted, false if user already voted.
- * Double-vote prevention is enforced at the DB level via UNIQUE(user_id, poll_id).
+ * Cast or update a vote. Uses UPSERT so the user can change their choice.
+ * Returns the option_id that is now recorded.
  */
 export async function castVote(
   userId: string,
   pollId: string,
   optionId: string
-): Promise<boolean> {
-  const res = await pool.query(
+): Promise<string> {
+  await pool.query(
     `INSERT INTO votes (user_id, poll_id, option_id)
      VALUES ($1, $2, $3)
-     ON CONFLICT (user_id, poll_id) DO NOTHING`,
+     ON CONFLICT (user_id, poll_id)
+     DO UPDATE SET option_id = EXCLUDED.option_id, created_at = NOW()`,
     [userId, pollId, optionId]
   );
-  return (res.rowCount ?? 0) > 0;
+  return optionId;
 }
 
 /** Returns the option the user voted for, or null if not voted */

@@ -28,13 +28,7 @@ export async function POST(
       );
     }
 
-    const inserted = await castVote(session.user.id, pollId, parsed.data.optionId);
-    if (!inserted) {
-      return NextResponse.json(
-        { error: "Kamu sudah memberikan suara pada polling ini" },
-        { status: 409 }
-      );
-    }
+    await castVote(session.user.id, pollId, parsed.data.optionId);
 
     // Fetch updated counts and broadcast via Pusher
     // Pusher trigger is fire-and-forget — a Pusher failure must NOT

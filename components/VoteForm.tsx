@@ -6,15 +6,16 @@ interface VoteFormProps {
   pollId: string;
   options: { id: string; text: string; vote_count: number }[];
   onVoted: (optionId: string) => void;
+  defaultSelected?: string | null;
 }
 
-export default function VoteForm({ pollId, options, onVoted }: VoteFormProps) {
+export default function VoteForm({ pollId, options, onVoted, defaultSelected }: VoteFormProps) {
   const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState<string>("");
+  const [selected, setSelected] = useState<string>(defaultSelected ?? "");
   const [error, setError] = useState("");
 
   async function handleSelect(optionId: string) {
-    if (loading) return;
+    if (loading || optionId === selected) return;
     setSelected(optionId);
     setError("");
     setLoading(true);
